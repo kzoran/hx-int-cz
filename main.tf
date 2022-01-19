@@ -1,4 +1,4 @@
-#HX Policies
+#HX Policies to attach to a profile
 resource "intersight_hyperflex_auto_support_policy" "hx_auto_support_policy-tf" {
   admin_state               = true
   service_ticket_receipient = "zkovacev@cisco.com"
