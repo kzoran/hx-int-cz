@@ -1,4 +1,5 @@
-#HX Policies
+##################################################################################################
+### Intersight Policies to be attached on Hyperflex Cluster profile created below
 resource "intersight_hyperflex_auto_support_policy" "hx_auto_support_policy-tf" {
   admin_state               = true
   service_ticket_receipient = "zkovacev@cisco.com"
@@ -27,8 +28,8 @@ output "intersight_hyperflex_local_credential_policy" {
 resource "intersight_hyperflex_proxy_setting_policy" "hx_proxy_setting_policy-tf" {
   hostname = var.proxy_hostname
   port     = var.proxy_port
-  #username    = ""
-  #password    = "ChangeMe"
+  #username    = var.proxy_username
+  #password    = var.proxy_password
   description = "Proxy Policy for SJC18 Lab"
   tags {
     key   = "SJC18"
@@ -110,12 +111,8 @@ resource "intersight_hyperflex_cluster_network_policy" "hx_cluster_network_polic
     name    = var.vm_migration_vlan_name
     vlan_id = var.vm_migration_vlan_id
   }
-  # vm_network_vlans {
-  #   name    = "VLAN22"
-  #   vlan_id = 22
-  # }
-  vm_network_vlans = var.vm_networks_ids
 
+  vm_network_vlans = var.vm_networks_ids
 
   kvm_ip_range {
     start_addr = var.kvm_ip_start
@@ -147,17 +144,13 @@ resource "intersight_hyperflex_software_version_policy" "hx_software_version_pol
   }
   name = "hx_software_version_policy-tf"
 }
-
-### Cluster HX Profile
+################################################################################################
+### Hyperflex Cluster Profile that uses the Policies created before.
 resource "intersight_hyperflex_cluster_profile" "hyperflex_cluster_profile-cz" {
   storage_data_vlan {
     name    = var.hx_storage_vlan_name
     vlan_id = var.hx_storage_vlan_id
   }
-  #storage_data_vlan = {
-  #    name    = "hx-storage-data"
-  #    vlan_id = 27
-  #}
 
   mgmt_ip_address    = "10.2.0.230"
   mac_address_prefix = "00:25:B5:D5"
@@ -215,12 +208,6 @@ resource "intersight_hyperflex_cluster_profile" "hyperflex_cluster_profile-cz" {
     moid        = intersight_hyperflex_software_version_policy.hx_software_version_policy-tf.moid
     object_type = "hyperflex.SoftwareVersionPolicy"
   }
-
-  #storage_data_vlan = {
-  #  name    = "hx-storage-data"
-  #  vlan_id = 27
-  #}
-
 }
 
 
