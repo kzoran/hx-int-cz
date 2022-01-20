@@ -1,4 +1,4 @@
-#HX Policies to attach to a profile
+#HX Policies
 resource "intersight_hyperflex_auto_support_policy" "hx_auto_support_policy-tf" {
   admin_state               = true
   service_ticket_receipient = "zkovacev@cisco.com"
@@ -21,8 +21,8 @@ resource "intersight_hyperflex_local_credential_policy" "hx_local_credential_pol
   name = "hx_local_credential_policy-tf"
 }
 output "intersight_hyperflex_local_credential_policy" {
-    value = intersight_hyperflex_local_credential_policy.hx_local_credential_policy-tf
-    sensitive = true
+  value     = intersight_hyperflex_local_credential_policy.hx_local_credential_policy-tf
+  sensitive = true
 }
 resource "intersight_hyperflex_proxy_setting_policy" "hx_proxy_setting_policy-tf" {
   hostname = var.proxy_hostname
@@ -139,7 +139,8 @@ resource "intersight_hyperflex_cluster_network_policy" "hx_cluster_network_polic
   description = "TF HyperFlex network policy for FI managed deployment "
 }
 resource "intersight_hyperflex_software_version_policy" "hx_software_version_policy-tf" {
-  hxdp_version = var.hxdp_version
+  hxdp_version            = var.hxdp_version
+  server_firmware_version = var.server_firmware_version
   organization {
     object_type = "organization.Organization"
     moid        = var.organization_organization
@@ -149,6 +150,10 @@ resource "intersight_hyperflex_software_version_policy" "hx_software_version_pol
 
 ### Cluster HX Profile
 resource "intersight_hyperflex_cluster_profile" "hyperflex_cluster_profile-cz" {
+  storage_data_vlan {
+    name    = var.hx_storage_vlan_name
+    vlan_id = var.hx_storage_vlan_id
+  }
   #storage_data_vlan = {
   #    name    = "hx-storage-data"
   #    vlan_id = 27
@@ -166,7 +171,7 @@ resource "intersight_hyperflex_cluster_profile" "hyperflex_cluster_profile-cz" {
   local_credential {
     moid        = intersight_hyperflex_local_credential_policy.hx_local_credential_policy-tf.moid
     object_type = "hyperflex.LocalCredentialPolicy"
-    }
+  }
 
   mgmt_platform = "FI"
   replication   = 3
@@ -205,7 +210,7 @@ resource "intersight_hyperflex_cluster_profile" "hyperflex_cluster_profile-cz" {
   tags {
     key   = "test"
     value = "ucsback-10G-3nodehx-cluster-"
-  }  
+  }
   software_version {
     moid        = intersight_hyperflex_software_version_policy.hx_software_version_policy-tf.moid
     object_type = "hyperflex.SoftwareVersionPolicy"
@@ -217,11 +222,8 @@ resource "intersight_hyperflex_cluster_profile" "hyperflex_cluster_profile-cz" {
   #}
 
 }
-  #
-  #  storage_data_vlan = {
-  #    name    = var.hx_storage_vlan_name
-  #    vlan_id = var.hx_storage_vlan_id
-  #  }
-  #  
+
+
+
 
 #ZK

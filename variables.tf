@@ -1,12 +1,14 @@
-#variable "api_key" {
-#  type        = string
-#  description = "API Key"
-#  #default = "59b323f9f11aa10001496a3b/59b31424f11aa1000146f75e/61a994c67564612d32e8183a"
-#}
-#variable "api_key_file" {
-#  type        = string
-#  description = "Secret Key or file location"
-#}
+variable "apikey" {
+  type        = string
+  description = "API Key for Intersight"
+  sensitive   = true
+  default     = "59b323f9f11aa10001496a3b/59b31424f11aa1000146f75e/61a994c67564612d32e8183a"
+}
+variable "secretkey" {
+  type        = string
+  description = "Secret Key or file location"
+  default     = "/Users/zkovacev/Learning/terraform/intersight/zoran-intersight/Intersight-SecretKey.txt"
+}
 #variable "api_endpoint" {
 #  type        = string
 #  description = "API Endpoint URL"
@@ -288,19 +290,24 @@ variable "hxdp_version" {
   #default = "4.5(2b)"
   default = "5.0(1a)"
 }
+variable "server_firmware_version" {
+  type        = string
+  description = "ucs server firmware version"
+  default     = "4.2(1i)"
+}
 
-## Storage Data VLAN
-#variable "hx_storage_vlan_name" {
-#  type = string
-#  description = "The name of the HX storage VLAN in the UCSM configuration"
-#  default = "hx_storage-930"
-#}
-#
-#variable "hx_storage_vlan_id" {
-#  type = number
-#  description = "The VLAN ID of the HX storage VLAN"
-#  default = "930"
-#}
+# Storage Data VLAN
+variable "hx_storage_vlan_name" {
+  type        = string
+  description = "The name of the HX storage VLAN in the UCSM configuration"
+  default     = "hx-storage-930"
+}
+
+variable "hx_storage_vlan_id" {
+  type        = string
+  description = "The VLAN ID of the HX storage VLAN"
+  default     = "930"
+}
 
 
 
