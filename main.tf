@@ -9,7 +9,7 @@ resource "intersight_hyperflex_auto_support_policy" "hx_auto_support_policy-tf" 
   name = "hx_auto_support_policy-tf"
 }
 
-resource "intersight_hyperflex_local_credential_policy" "hx_local_credential_policy-tf" {
+resource "intersight_hyperflex_local_credential_policy" "hx_local_credential_policy-tf01" {
   hxdp_root_pwd               = var.hxdp_password
   hypervisor_admin            = var.esxi_admin
   hypervisor_admin_pwd        = var.esxi_password
@@ -18,10 +18,10 @@ resource "intersight_hyperflex_local_credential_policy" "hx_local_credential_pol
     object_type = "organization.Organization"
     moid        = var.organization_organization
   }
-  name = "hx_local_credential_policy-tf"
+  name = "hx_local_credential_policy-tf01"
 }
 output "intersight_hyperflex_local_credential_policy" {
-  value     = intersight_hyperflex_local_credential_policy.hx_local_credential_policy-tf
+  value     = intersight_hyperflex_local_credential_policy.hx_local_credential_policy-tf01
   sensitive = true
 }
 resource "intersight_hyperflex_proxy_setting_policy" "hx_proxy_setting_policy-tf" {
@@ -138,14 +138,60 @@ resource "intersight_hyperflex_cluster_network_policy" "hx_cluster_network_polic
   name        = "hx_cluster_network_policy-fi-tf"
   description = "TF HyperFlex network policy for FI managed deployment "
 }
-resource "intersight_hyperflex_software_version_policy" "hx_software_version_policy-tf" {
+resource "intersight_hyperflex_software_version_policy" "hx_software_version_policy-tf01" {
   hxdp_version            = var.hxdp_version
   server_firmware_version = var.server_firmware_version
   organization {
     object_type = "organization.Organization"
     moid        = var.organization_organization
   }
-  name = "hx_software_version_policy-tf"
+
+  name = "hx_software_version_policy-tf01"
+}
+
+resource "intersight_hyperflex_ext_fc_storage_policy" "hyperflex_ext_fc_storage_policy-tf01" {
+  description = "hyperflex ext fc storage policy"
+  name        = "hyperflex_ext_fc_storage_policy-tf01"
+  admin_state = true
+  exta_traffic {
+    name        = "VSAN100"
+    vsan_id     = 100
+    object_type = "replication.NamedVsan"
+  }
+  extb_traffic {
+    name        = "VSAN200"
+    vsan_id     = 200
+    object_type = "replication.NamedVsan"
+  }
+  wwxn_prefix_range {
+    end_addr    = "20:00:00:25:B5:B1"
+    start_addr  = "20:00:00:25:B5:A1"
+    object_type = "hyperflex.WwxnPrefixRange"
+  }
+  organization {
+    object_type = "organization.Organization"
+    moid        = var.organization_organization
+  }
+}
+
+resource "intersight_hyperflex_ext_iscsi_storage_policy" "hyperflex_ext_iscsi_storage_policy-tf01" {
+  description = "hyperflex ext iscsi storage policy"
+  name        = "hyperflex_ext_iscsi_storage_policy-tf01"
+  admin_state = true
+  exta_traffic {
+    name        = "iSCSI-A"
+    vlan_id     = 1998
+    object_type = "replication.NamedVsan"
+  }
+  extb_traffic {
+    name        = "iSCSI-B"
+    vlan_id     = 1999
+    object_type = "replication.NamedVsan"
+  }
+  organization {
+    object_type = "organization.Organization"
+    moid        = var.organization_organization
+  }
 }
 
 ### Cluster HX Profile
@@ -160,7 +206,8 @@ resource "intersight_hyperflex_cluster_profile" "hyperflex_cluster_profile-cz" {
   #}
 
   mgmt_ip_address    = "10.2.0.230"
-  mac_address_prefix = "00:25:B5:D5"
+  mac_address_prefix = "00:25:B5:11"
+  wwxn_prefix = "20:00:00:25:B5:11"
 
   organization {
     object_type = "organization.Organization"
@@ -168,8 +215,17 @@ resource "intersight_hyperflex_cluster_profile" "hyperflex_cluster_profile-cz" {
   }
   name = "hyperflex_cluster_profile-cz"
 
+  ext_fc_storage {
+    moid = intersight_hyperflex_ext_fc_storage_policy.hyperflex_ext_fc_storage_policy-tf01.moid
+    object_type = "hyperflex.ExtFcStoragePolicy"
+  }
+  
+  ext_iscsi_storage {
+    moid = intersight_hyperflex_ext_iscsi_storage_policy.hyperflex_ext_iscsi_storage_policy-tf01.moid
+    object_type = "hyperflex.ExtIscsiStoragePolicy"
+  }
   local_credential {
-    moid        = intersight_hyperflex_local_credential_policy.hx_local_credential_policy-tf.moid
+    moid        = intersight_hyperflex_local_credential_policy.hx_local_credential_policy-tf01.moid
     object_type = "hyperflex.LocalCredentialPolicy"
   }
 
@@ -212,7 +268,7 @@ resource "intersight_hyperflex_cluster_profile" "hyperflex_cluster_profile-cz" {
     value = "ucsback-10G-3nodehx-cluster-"
   }
   software_version {
-    moid        = intersight_hyperflex_software_version_policy.hx_software_version_policy-tf.moid
+    moid        = intersight_hyperflex_software_version_policy.hx_software_version_policy-tf01.moid
     object_type = "hyperflex.SoftwareVersionPolicy"
   }
 
